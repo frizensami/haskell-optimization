@@ -76,7 +76,7 @@ Out of this data, we are mostly interested in 3 numbers:
 ![MUTGC Output](mutgc.png)
 ![Productivity Output](prod.png)
 
-These are numbers after some optimizations were done - my initial productivity was less than **20%**! This is a good indicator that the garbage collection being done to the detriment of the rest of the computation. 
+These are numbers after some optimizations were done - my initial productivity was less than **20%**! This is a good indicator that the garbage collection being done was to the detriment of the rest of the computation. 
 
 
 ### Step 4: Where is the garbage?
@@ -172,7 +172,7 @@ addOneStatsIdleCycle :: ProcessorStatistics -> ProcessorStatistics
 addOneStatsIdleCycle (ProcessorStatistics compute loadstore !idle misscount pid) = ProcessorStatistics compute loadstore (idle + 1) misscount pid
 ```
 #### Considering different data structures
-The simulator used a large data structure (Haskell's Data.Array) of many nested sub-structures (some lists, some more Data.Array-s). Every cycle, as some of this structure was modified and the rest were not accessed, a lot of copying had to be done and a lot of lazy evaluation was occuring with built up thunks. Our stopgap solution was to change to `Data.Array.Unboxed`, a drop in solution for our use case since our storage type was `Int32` - and we suddenly had less overhead in time and space. Other options for improving this data structure could have been `Data.Array.DiffArray`, `Vector`, or `STArray/STUArray`, perhaps even `IOArray`. 
+The simulator used a large data structure (Haskell's `Data.Array`) of many nested sub-structures (some lists, some more `Data.Array`-s). Every cycle, as some of this structure was modified and the rest were not accessed, a lot of copying had to be done and a lot of lazy evaluation was occuring with built up thunks. Our stopgap solution was to change to `Data.Array.Unboxed`, a drop in solution for our use case since our storage type was `Int32` - and we suddenly had less overhead in time and space. Other options for improving this data structure could have been `Data.Array.DiffArray`, `Vector`, or `STArray/STUArray`, perhaps even `IOArray`. 
 
 I recommend very carefully choosing your backing data structure and consider the monad you intend to work in if you want to use mutable arrays. 
 
